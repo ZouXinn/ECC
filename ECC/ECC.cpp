@@ -4,8 +4,8 @@
 #include <string.h>
 
 /*
-	函数保证a >= b,返回gcd(a,b)
-	a ， b可以为0
+	返回gcd(a,b)
+	a,b可以为0
 */
 
 LL ECC::gcd(LL a, LL b)
