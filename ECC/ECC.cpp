@@ -238,17 +238,22 @@ Point ECC::decode(PointPair Cm)
 */
 Point ECC::encodeMessage(char message)
 {
-	LL C = (LL)message;
+	LL C = (LL)message; //message 为 x
+	C = (((C * C * C) % this->p) + (C * a) % p + b) % p; //y^2 = C mod p
 	int L = quadraticresidue(this->p, C);
-	Point ans(C,0);
+	Point ans(message,0);
 	ans.offset = 0;
 	while (L < 0)
 	{
 		ans.x = (ans.x + 1) % this->p;
 		ans.offset = (ans.offset + 1) % this->p;
-		L = quadraticresidue(this->p, ans.x);
+		C = ans.x;
+		C = (((C * C * C) % this->p) + (C * a) % p + b) % p;
+		L = quadraticresidue(this->p, C);
 	}
-	ans.y = powerMod(ans.x, (this->p + 1) / 4, this->p);
+	C = ans.x;
+	C = (((C * C * C) % this->p) + (C * a) % p + b) % p;
+	ans.y = powerMod(C, (this->p + 1) / 4, this->p);
 	return ans;
 	/*
 		字符串的预处理部分放在这里保存
