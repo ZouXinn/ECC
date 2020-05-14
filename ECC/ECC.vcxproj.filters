@@ -18,12 +18,18 @@
     <ClInclude Include="ECC.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MD5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ECC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MD5.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

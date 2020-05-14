@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
 #define LL long long
 #define INF 0x7FFFFFFFFFFFFFFF
+#define BYTE_PER_POINT 1
 
 struct Point
 {
@@ -24,6 +26,20 @@ struct Point
 	{
 		return this->x == INF && this->y == INF;
 	}
+};
+
+struct SignedMessage
+{
+	std::string message;
+	std::string hash;
+	LL numbers[16 / BYTE_PER_POINT];
+	LL Sn[16 / BYTE_PER_POINT];//MD5的HASH结果为16字节
+};
+
+struct VerifyResult
+{
+	bool success;//是否签名成功
+	std::string message;
 };
 
 struct PointPair
@@ -66,7 +82,6 @@ public:// 成员函数
 private:// 静态工具函数区
 	static LL mod(LL a, LL n);// 返回 a mod n，主要是处理a为负数的情况
 	static LL inv(LL a, LL n);// 返回 a关于模n的逆元，如果不可逆则返回0
-	static LL formed_gcd(LL a, LL b);//保证a >= b
 	static LL gcd(LL a, LL b);//对a，b的大小没有限制
 	static Point extend_gcd(LL a, LL b);//扩展的欧几里得算法求(x,y)使得ax+by = gcd(a,b)
 	static int quadraticresidue(LL p, LL c);//输入模p 计算c是否为p的二次剩余  1为可 -1为不可 勒让德记号
@@ -86,5 +101,8 @@ public:// 给前端调用的接口
 	void sign(); // 对消息进行数字签名
 	void verify(); // 数字签名验证
 	*/
+
+	SignedMessage sign(std::string message); // 对消息进行数字签名
+	VerifyResult verify(SignedMessage signedMessage); // 数字签名验证
 };
 

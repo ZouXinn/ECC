@@ -1,4 +1,6 @@
-﻿#include "ECC.h"
+﻿#pragma warning(disable:4996)
+#include "ECC.h"
+#include "MD5.h"
 #include <ctime>
 #include <stdlib.h>
 #include <string.h>
@@ -330,4 +332,72 @@ LL ECC::getRandom()
 {
 	LL low = 1, up = p;
 	return (rand() % (up - low)) + low;
+}
+
+/*
+	对消息进行数字签名
+*/
+SignedMessage ECC::sign(std::string message)
+{
+	SignedMessage ret;
+	const int pointNum = 16 / BYTE_PER_POINT;
+	char s1[100], s2[100];
+	LL k = getRandom();
+	Point R = mul(k, G);
+	sprintf(s1, "%x", R.x);
+	sprintf(s2, "%x", R.y);
+	ret.message = message;
+	message += s1;
+	message += s2;
+	ret.hash = MD5(message).toString();
+	for (int i = 0; i < pointNum; ++i) // 获得各个数字
+	{
+		std::string tStr = ret.hash.substr(BYTE_PER_POINT * i, BYTE_PER_POINT);
+		ret.numbers[i] = strtoll(tStr.c_str(), NULL, 16); // 16进制的数字字符串转为long long
+	}
+
+	for (int i = 0; i < pointNum; ++i) // 加密
+	{
+		ret.Sn[i] = mod(k - mod(ret.numbers[i] * r, p), p);
+	}
+	return ret;
+}
+
+/*
+	对数字签名进行验证
+*/
+VerifyResult ECC::verify(SignedMessage signedMessage)
+{
+	VerifyResult ret;
+	ret.message = signedMessage.message;
+	const int pointNum = 16 / BYTE_PER_POINT;
+	Point Rs[pointNum];
+
+	for (int i = 0; i < pointNum; ++i)
+	{
+		Point p1 = mul(signedMessage.Sn[i], G);
+		Point p2 = mul(signedMessage.numbers[i], P);
+		Rs[i] = add(p1, p2);
+	}
+	bool flag = true;
+	for (int i = 1; i < pointNum; ++i)
+		if (!(Rs[0] == Rs[i])) {
+			flag = false;
+			break;
+		}
+	if (!flag)
+	{
+		ret.success = false; return ret;
+	}
+
+	std::string verifyMessage = signedMessage.message;
+	char s1[100], s2[100];
+	sprintf(s1, "%x", Rs[0].x);
+	sprintf(s2, "%x", Rs[0].y);
+	verifyMessage += s1;
+	verifyMessage += s2;
+
+	std::string H = MD5(verifyMessage).toString();
+	ret.success = H == signedMessage.hash;
+	return ret;
 }
