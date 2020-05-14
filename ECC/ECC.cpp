@@ -8,25 +8,11 @@
 	a ， b可以为0
 */
 
-LL ECC::formed_gcd(LL a, LL b)
-{
-	return b > 0 ? formed_gcd(b, a % b) : a;
-}
-
-/*
-	a，b可以为0
-	a，b谁打谁小没有限制
-*/
 LL ECC::gcd(LL a, LL b)
 {
-	if (a < b)
-	{
-		LL t = a;
-		a = b;
-		b = t;
-	}
-	return formed_gcd(a, b);
+	return b > 0 ? gcd(b, a % b) : a;
 }
+
 
 /*
 	扩展的欧几里得算法求(x,y)使得ax+by = gcd(a,b)
@@ -51,8 +37,8 @@ Point ECC::extend_gcd(LL a, LL b)
 */
 LL ECC::mod(LL a, LL n)
 {
-	while (a < 0) a += n;
-	return a % n;
+	LL ans = a % n;
+	return ans >= 0 ? ans : ans + n;
 }
 
 /*

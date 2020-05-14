@@ -7,9 +7,10 @@
 
 int main()
 {
-    ECC ecc(2, 1, 6, 11, Point(7, 9));
+    /*ECC ecc(2, 1, 6, 11, Point(7, 9));
     Point p = ecc.mul(6, Point(7, 9));
 
-    std::cout << p.x << "   " << p.y << std::endl;
+    std::cout << p.x << "   " << p.y << std::endl;*/
+	printf("%d", -5 % 3);
     //std::cout << "Hello World!\n";
 }
