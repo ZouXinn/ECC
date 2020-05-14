@@ -79,10 +79,9 @@ public:// 成员函数
 
 
 private:// 静态工具函数区
-	static LL mod(LL a, LL n);// 返回 a mod n，主要是处理a为负数的情况
-	static LL inv(LL a, LL n);// 返回 a关于模n的逆元，如果不可逆则返回0
-	static LL formed_gcd(LL a, LL b);//保证a >= b
-	static LL gcd(LL a, LL b);//对a，b的大小没有限制
+	static LL mod(LL a, LL n); // 返回 a mod n，主要是处理a为负数的情况
+	static LL inv(LL a, LL n); // 返回 a关于模n的逆元，如果不可逆则返回0
+	static LL gcd(LL a, LL b); // 返回gcd(a,b)
 	static Point extend_gcd(LL a, LL b);//扩展的欧几里得算法求(x,y)使得ax+by = gcd(a,b)
 	
 public:// 给前端调用的接口

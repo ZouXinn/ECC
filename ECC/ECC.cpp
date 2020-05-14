@@ -1,3 +1,4 @@
+#pragma warning(disable:4996)
 #include "ECC.h"
 #include <ctime>
 #include <stdlib.h>
@@ -5,28 +6,13 @@
 #include "MD5.h"
 
 /*
-	函数保证a >= b,返回gcd(a,b)
+	返回gcd(a,b)
 	a ， b可以为0
 */
 
-LL ECC::formed_gcd(LL a, LL b)
-{
-	return b > 0 ? formed_gcd(b, a % b) : a;
-}
-
-/*
-	a，b可以为0
-	a，b谁大谁小没有限制
-*/
 LL ECC::gcd(LL a, LL b)
 {
-	if (a < b)
-	{
-		LL t = a;
-		a = b;
-		b = t;
-	}
-	return formed_gcd(a, b);
+	return b > 0 ? gcd(b, a % b) : a;
 }
 
 /*
@@ -52,8 +38,8 @@ Point ECC::extend_gcd(LL a, LL b)
 */
 LL ECC::mod(LL a, LL n)
 {
-	while (a < 0) a += n;
-	return a % n;
+	LL ans = a % n;
+	return ans >= 0 ? ans : ans + n;
 }
 
 /*
