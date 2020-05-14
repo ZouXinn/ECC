@@ -1,11 +1,11 @@
-#include "ECC.h"
+ï»¿#include "ECC.h"
 #include <ctime>
 #include <stdlib.h>
 #include <string.h>
 
 /*
-	·µ»Øgcd(a,b)
-	a,b¿ÉÒÔÎª0
+	è¿”å›gcd(a,b)
+	a,bå¯ä»¥ä¸º0
 */
 
 LL ECC::gcd(LL a, LL b)
@@ -15,7 +15,7 @@ LL ECC::gcd(LL a, LL b)
 
 
 /*
-	À©Õ¹µÄÅ·¼¸ÀïµÃËã·¨Çó(x,y)Ê¹µÃax+by = gcd(a,b)
+	æ‰©å±•çš„æ¬§å‡ é‡Œå¾—ç®—æ³•æ±‚(x,y)ä½¿å¾—ax+by = gcd(a,b)
 */
 Point ECC::extend_gcd(LL a, LL b)
 {
@@ -31,9 +31,68 @@ Point ECC::extend_gcd(LL a, LL b)
 	ans.y = y;
 	return ans;
 }
+/*
+	æ±‚å‹’è®©å¾·è®°å·çš„å€¼
+*/
+int ECC::quadraticresidue(LL p, LL c)
+{
+	LL T = 0;
+	int L = 1;
+	while (c != 1)
+	{
+		if (c % 2 == 0) // c is even
+		{
+			LL condition = (p * p - 1) / 8;
+			if (condition % 2 == 1) //is odd
+			{
+				L = L * -1;
+			}
+			c = c >> 1;
+		}
+		else {
+			LL condition = (p - 1) * (c - 1) / 4;
+			if (condition % 2 == 1) //is odd
+			{
+				L = L * -1;
+			}
+			T = c;
+			c = p;
+			p = T;
+			c = c % T;
+		}
+	}
+	return L;
+}
+/*
+	æ±‚b^n (mod) m  bä¸ºåº•æ•°  nä¸ºæŒ‡æ•°  mä¸ºæ¨¡æ•° 
+*/
+LL ECC::powerMod(LL b, LL n, LL m)
+{
+	// aå­˜æ”¾è®¡ç®—ç»“æœï¼Œåˆå§‹åŒ–ä¸º1. 
+	LL a = 1;
+	LL i, k = 0, num = n;
+	/*è®¡ç®—æŒ‡æ•°çš„äºŒè¿›åˆ¶ä½æ•°k.
+	*/
+	while (num)
+	{
+		num = num >> 1;
+		++k;
+	}
+
+	// ä¹Ÿå¯ä»¥å°†æŒ‡æ•°çš„äºŒè¿›åˆ¶ç”¨ä¸€ä¸ªæ•°ç»„æˆ–é˜Ÿåˆ—å­˜æ”¾ï¼Œæ–¹ä¾¿å–å€¼.
+	for (i = 0; i < k; ++i)
+	{
+		// å–nçš„äºŒè¿›åˆ¶çš„ç¬¬iä½ï¼Œåˆ¤æ–­æ˜¯å¦ä¸º1.
+		if ((n >> i) & 1)
+			a = a * b % m;
+		b = b * b % m;
+	}
+
+	return a;
+}
 
 /*
-	·µ»Ø a mod n£¬Ö÷ÒªÊÇ´¦ÀíaÎª¸ºÊıµÄÇé¿ö
+	è¿”å› a mod nï¼Œä¸»è¦æ˜¯å¤„ç†aä¸ºè´Ÿæ•°çš„æƒ…å†µ
 */
 LL ECC::mod(LL a, LL n)
 {
@@ -42,7 +101,7 @@ LL ECC::mod(LL a, LL n)
 }
 
 /*
-	·µ»Øa¹ØÓÚÄ£nµÄÄæ,Èç¹û²»¿ÉÄæ£¬Ôò·µ»Ø0
+	è¿”å›aå…³äºæ¨¡nçš„é€†,å¦‚æœä¸å¯é€†ï¼Œåˆ™è¿”å›0
 */
 LL ECC::inv(LL a, LL n)
 {
@@ -55,12 +114,12 @@ LL ECC::inv(LL a, LL n)
 
 
 /*
-	·µ»Øµãp1+p2µÄ½á¹û£¬p1ºÍp2±ØĞëÊÇÇúÏßÉÏµÄµã
+	è¿”å›ç‚¹p1+p2çš„ç»“æœï¼Œp1å’Œp2å¿…é¡»æ˜¯æ›²çº¿ä¸Šçš„ç‚¹
 */
 Point ECC::add(Point p1, Point p2)
 {
-	if (p1.O()) return p2; // Èç¹ûp1ÊÇO£¬ÔòÖ»Ğè·µ»Øp2
-	if (p2.O()) return p1; // Èç¹ûp2ÊÇO£¬ÔòÖ»Ğè·µ»Øp1
+	if (p1.O()) return p2; // å¦‚æœp1æ˜¯Oï¼Œåˆ™åªéœ€è¿”å›p2
+	if (p2.O()) return p1; // å¦‚æœp2æ˜¯Oï¼Œåˆ™åªéœ€è¿”å›p1
 	Point ans(0, 0);
 
 	LL lambda = 0;
@@ -90,7 +149,7 @@ Point ECC::add(Point p1, Point p2)
 }
 
 /*
-	·µ»Ø p1 - p2 µÄ½á¹û
+	è¿”å› p1 - p2 çš„ç»“æœ
 */
 Point ECC::minus(Point p1, Point p2)
 {
@@ -100,19 +159,19 @@ Point ECC::minus(Point p1, Point p2)
 }
 
 /*
-	ÔÚÓĞpsºÍflagsµÄÇé¿öÏÂ£¬·µ»Øk*pµÄÖµ
-	ÆäÖĞ£ºps[i]±íÊ¾k*pµÄ½á¹û£¬flags[i]±íÊ¾ÊÇ·ñÒÑ¾­Çó³öps[i]
+	åœ¨æœ‰pså’Œflagsçš„æƒ…å†µä¸‹ï¼Œè¿”å›k*pçš„å€¼
+	å…¶ä¸­ï¼šps[i]è¡¨ç¤ºk*pçš„ç»“æœï¼Œflags[i]è¡¨ç¤ºæ˜¯å¦å·²ç»æ±‚å‡ºps[i]
 */
 Point ECC::subMul(LL k, Point p, Point ps[], bool flags[])
 {
 	if (flags[k]) return ps[k];
-	else if (k % 2)//ÆæÊı
+	else if (k % 2)//å¥‡æ•°
 	{
 		Point p1 = subMul(k / 2, p, ps, flags), p2 = subMul(k / 2 + 1, p, ps, flags);
 		flags[k] = true;
 		return ps[k] = add(p1, p2);
 	}
-	else//Å¼Êı
+	else//å¶æ•°
 	{
 		Point phalf = subMul(k / 2, p, ps, flags);
 		flags[k] = true;
@@ -121,7 +180,7 @@ Point ECC::subMul(LL k, Point p, Point ps[], bool flags[])
 }
 
 /*
-	Çók*pµÄ½á¹û
+	æ±‚k*pçš„ç»“æœ
 */
 Point ECC::mul(LL k, Point p)
 {
@@ -142,7 +201,7 @@ Point ECC::mul(LL k, Point p)
 }
 
 /*
-	½«ÏûÏ¢Pm¼ÓÃÜ³É{kG,Pm+kP}£¬·µ»ØÖµµÄµÚÒ»¸öµãÊÇkG£¬µÚ¶ş¸öÊÇPm+kP
+	å°†æ¶ˆæ¯PmåŠ å¯†æˆ{kG,Pm+kP}ï¼Œè¿”å›å€¼çš„ç¬¬ä¸€ä¸ªç‚¹æ˜¯kGï¼Œç¬¬äºŒä¸ªæ˜¯Pm+kP
 */
 PointPair ECC::encode(Point Pm)
 {
@@ -164,7 +223,7 @@ PointPair ECC::encode(Point Pm)
 }
 
 /*
-	½«ÃÜÎÄCm = {kG,Pm+kP}½âÃÜ³ÉÏûÏ¢M¶ÔÓ¦µÄµãPm
+	å°†å¯†æ–‡Cm = {kG,Pm+kP}è§£å¯†æˆæ¶ˆæ¯Må¯¹åº”çš„ç‚¹Pm
 */
 Point ECC::decode(PointPair Cm)
 {
@@ -173,12 +232,64 @@ Point ECC::decode(PointPair Cm)
 }
 
 /*
-	¹¹Ôìº¯Êı
+	æš‚ç”¨ä¸€ä¸ªå­—èŠ‚åŠ å¯†æˆç‚¹
+*/
+Point ECC::encodeMessage(char message)
+{
+	LL C = (LL)message;
+	int L = quadraticresidue(this->p, C);
+	Point ans(C,0);
+	ans.offset = 0;
+	while (L < 0)
+	{
+		ans.x = (ans.x + 1) % this->p;
+		ans.offset = (ans.offset + 1) % this->p;
+		L = quadraticresidue(this->p, ans.x);
+	}
+	ans.y = powerMod(ans.x, (this->p + 1) / 4, this->p);
+	return ans;
+	/*
+		å­—ç¬¦ä¸²çš„é¢„å¤„ç†éƒ¨åˆ†æ”¾åœ¨è¿™é‡Œä¿å­˜
+		//std::string teststr = "æ— æƒ…é“æ‰‹";
+
+		//const char* a = teststr.c_str();
+
+		//char* b = new char[teststr.length() + 1];
+
+		//memset(b, 0, teststr.length() + 1);
+
+		//memcpy(b, a, teststr.length());
+
+		//unsigned char* c = (unsigned char*)b; //Â Â byteä¸ Â unsignedÂ char*ç›¸åŒ
+
+		//for(int i = 0;i < teststr.length();i++)
+		//{
+		//    std::cout << i << ":" << (int)(c[i]) << std::endl;
+		//}
+
+		//std::string f((char*)c);
+		//std::cout << f;
+
+	*/
+
+}
+
+/*
+	å°†æ›²çº¿ä¸Šçš„ç‚¹Pmè½¬åŒ–ä¸ºæ¶ˆæ¯messageï¼Œå’ŒencodeMessageäº’ä¸ºé€†è¿‡ç¨‹
+*/
+char ECC::decodeMessage(Point Pm)
+{
+	char ans = (Pm.x + this->p - Pm.offset) % this->p;
+	return ans;
+}
+
+/*
+	æ„é€ å‡½æ•°
 */
 
 ECC::ECC()
 {
-	//ÉèÖÃÑ¡ºÃµÄ²ÎÊı
+	//è®¾ç½®é€‰å¥½çš„å‚æ•°
 
 
 }
@@ -191,7 +302,7 @@ ECC::ECC(LL r, LL a, LL b, LL p, Point G)
 	this->p = p;
 	this->G = G;
 	this->P = mul(r, G);
-	//¼ÆËãn
+	//è®¡ç®—n
 	Point tG = G;
 	this->n = 1;
 	while (!tG.O())
@@ -213,7 +324,7 @@ ECC::ECC(LL r, LL a, LL b, LL p, Point G, LL n)
 }
 
 /*
-	»ñÈ¡Ëæ»úÊık , 1 <= k < p
+	è·å–éšæœºæ•°k , 1 <= k < p
 */
 LL ECC::getRandom()
 {

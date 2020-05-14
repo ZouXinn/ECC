@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "ECC.h"
+#include <string>
 
 int main()
 {
@@ -11,6 +12,10 @@ int main()
     Point p = ecc.mul(6, Point(7, 9));
 
     std::cout << p.x << "   " << p.y << std::endl;*/
-	printf("%d", -5 % 3);
+
+ //   std::string str = "椭圆曲线算法";
+ //   printf("%s", str.data());
+ //   str.data();
+	//printf("%d", -5 % 3);
     //std::cout << "Hello World!\n";
 }
