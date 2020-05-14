@@ -34,6 +34,67 @@ Point ECC::extend_gcd(LL a, LL b)
 }
 
 /*
+	求勒让德记号的值
+*/
+int ECC::quadraticresidue(LL p, LL c)
+{
+	LL T = 0;
+	int L = 1;
+	while (c != 1)
+	{
+		if (c % 2 == 0) // c is even
+		{
+			LL condition = (p * p - 1) / 8;
+			if (condition % 2 == 1) //is odd
+			{
+				L = L * -1;
+			}
+			c = c >> 1;
+		}
+		else {
+			LL condition = (p - 1) * (c - 1) / 4;
+			if (condition % 2 == 1) //is odd
+			{
+				L = L * -1;
+			}
+			T = c;
+			c = p;
+			p = T;
+			c = c % T;
+		}
+	}
+	return L;
+}
+
+/*
+	求b^n (mod) m  b为底数  n为指数  m为模数
+*/
+LL ECC::powerMod(LL b, LL n, LL m)
+{
+	// a存放计算结果，初始化为1. 
+	LL a = 1;
+	LL i, k = 0, num = n;
+	/*计算指数的二进制位数k.
+	*/
+	while (num)
+	{
+		num = num >> 1;
+		++k;
+	}
+
+	// 也可以将指数的二进制用一个数组或队列存放，方便取值.
+	for (i = 0; i < k; ++i)
+	{
+		// 取n的二进制的第i位，判断是否为1.
+		if ((n >> i) & 1)
+			a = a * b % m;
+		b = b * b % m;
+	}
+
+	return a;
+}
+
+/*
 	返回 a mod n，主要是处理a为负数的情况
 */
 LL ECC::mod(LL a, LL n)
@@ -171,6 +232,50 @@ Point ECC::decode(PointPair Cm)
 {
 	Point pMinus = mul(r, Cm.first);
 	return minus(Cm.second, pMinus);
+}
+
+/*
+	暂用一个字节加密成点
+*/
+Point ECC::encodeMessage(char message)
+{
+	LL C = (LL)message;
+	int L = quadraticresidue(this->p, C);
+	Point ans(C, 0);
+	ans.offset = 0;
+	while (L < 0)
+	{
+		ans.x = (ans.x + 1) % this->p;
+		ans.offset = (ans.offset + 1) % this->p;
+		L = quadraticresidue(this->p, ans.x);
+	}
+	ans.y = powerMod(ans.x, (this->p + 1) / 4, this->p);
+	return ans;
+	/*
+		字符串的预处理部分放在这里保存
+		//std::string teststr = "无情铁手";
+		//const char* a = teststr.c_str();
+		//char* b = new char[teststr.length() + 1];
+		//memset(b, 0, teststr.length() + 1);
+		//memcpy(b, a, teststr.length());
+		//unsigned char* c = (unsigned char*)b; //  byte与  unsigned char*相同
+		//for(int i = 0;i < teststr.length();i++)
+		//{
+		//    std::cout << i << ":" << (int)(c[i]) << std::endl;
+		//}
+		//std::string f((char*)c);
+		//std::cout << f;
+	*/
+
+}
+
+/*
+	将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
+*/
+char ECC::decodeMessage(Point Pm)
+{
+	char ans = (Pm.x + this->p - Pm.offset) % this->p;
+	return ans;
 }
 
 /*

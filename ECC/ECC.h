@@ -7,6 +7,7 @@
 struct Point
 {
 	LL x, y;
+	LL offset;
 	Point()
 	{
 		this->x = 0;
@@ -72,8 +73,8 @@ public:// 成员函数
 	Point decode(PointPair Cm); // 将密文Cm = {kG,Pm+kP}解密成消息M对应的点Pm
 
 	//消息的类型可以修改，不一定是char*  ,string什么的也行
-	Point encodeMessage(char* message);//将消息转化为曲线上的点Pm
-	char* decodeMessage(Point Pm);//将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
+	Point encodeMessage(char message);//将消息转化为曲线上的点Pm
+	char decodeMessage(Point Pm);//将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
 
 	LL getRandom(); // 获取随机数k , 1 <= k < p
 
@@ -83,7 +84,9 @@ private:// 静态工具函数区
 	static LL inv(LL a, LL n); // 返回 a关于模n的逆元，如果不可逆则返回0
 	static LL gcd(LL a, LL b); // 返回gcd(a,b)
 	static Point extend_gcd(LL a, LL b);//扩展的欧几里得算法求(x,y)使得ax+by = gcd(a,b)
-	
+	static int quadraticresidue(LL p, LL c);//输入模p 计算c是否为p的二次剩余  1为可 -1为不可 勒让德记号
+	static LL powerMod(LL b, LL n, LL m);//求b^n (mod) m  b为底数  n为指数  m为模数
+
 public:// 给前端调用的接口
 	ECC(); // 默认使用默认的值进行构造
 
