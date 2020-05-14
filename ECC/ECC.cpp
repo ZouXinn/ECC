@@ -427,7 +427,7 @@ bool ECC::encodefile(std::string inputFilePath, std::string outputFilePath) {
 
 	fread(buf, sizeof(byte), size, in);
 	for (LL i = 0; i < size; i++) {
-		printf("%d", buf[i]);
+		//printf("%d", buf[i]);
 		points[i] = this->encodeMessage(buf[i]);
 		// buf[i] = this->decodeMessage(points[i]);
 	}
