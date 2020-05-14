@@ -401,3 +401,124 @@ VerifyResult ECC::verify(SignedMessage signedMessage)
 	ret.success = H == signedMessage.hash;
 	return ret;
 }
+
+
+/*
+ * author:zfq
+ */
+bool ECC::encodefile(std::string inputFilePath, std::string outputFilePath) {
+
+	if (inputFilePath == "" || outputFilePath == "")
+		return false;
+
+	FILE * in = fopen(inputFilePath.c_str(), "rb");
+	FILE * out = fopen(outputFilePath.c_str(), "wb");
+	fseek(in, 0, SEEK_END);
+	LL size = ftell(in);
+	fseek(in, 0, SEEK_SET);
+
+	byte * buf = new byte[size];
+	Point* points = new Point[size];
+
+	fread(buf, sizeof(byte), size, in);
+	for (LL i = 0; i < size; i++) {
+		printf("%d", buf[i]);
+		points[i] = this->encodeMessage(buf[i]);
+		// buf[i] = this->decodeMessage(points[i]);
+	}
+
+	fwrite(points, sizeof(Point), size, out);
+
+	fclose(in);
+	fclose(out);
+	delete[] points;
+	delete[] buf;
+
+	//std::ifstream instream;
+	//instream.open(inputFilePath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
+	//std::ofstream outstream;
+	//outstream.open(outputFilePath.c_str(), std::ios::out | std::ios::binary);
+	//if(!instream.is_open() || !outstream.is_open())
+	//	return false;
+
+	//LL size = instream.tellg();
+	//instream.seekg(0, std::ios::beg);
+	//char* buf = new char[size];
+	//Point* points = new Point[size];
+	//instream.read(buf, size);
+	//for (LL i = 0; i < size; i++) {
+	//	printf("%c", buf[i]);
+	//	points[i] = this->encodeMessage(buf[i]);
+	//	buf[i] = this->decodeMessage(points[i]);
+	//}
+	//// outstream.write((char *)p, size*sizeof(Point));
+	//outstream.write(buf, size);
+	//instream.close();
+	//outstream.close();
+	//delete[] buf;
+	//delete[] points;
+}
+
+/*
+ * author:zfq
+ */
+bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
+
+	if (inputFilePath == "" || outputFilePath == "")
+		return false;
+
+	FILE* in = fopen(inputFilePath.c_str(), "rb");
+	FILE* out = fopen(outputFilePath.c_str(), "wb");
+	fseek(in, 0, SEEK_END);
+	LL len = ftell(in); // 该文件有多少字节
+	fseek(in, 0, SEEK_SET);
+
+	if (len % sizeof(Point) != 0) {
+		printf("这里有问题");
+		return false;
+	}
+
+	LL size = len / sizeof(Point);
+	Point* points = new Point[size];
+	byte * buf = new byte[size];
+
+	fread(points, sizeof(Point), size, in);
+	for (LL i = 0; i < size; i++) {
+		//printf("%c", buf[i]);
+		// points[i] = this->encodeMessage(buf[i]);
+		buf[i] = this->decodeMessage(points[i]);
+	}
+
+	fwrite(buf, sizeof(char), size, out);
+
+	fclose(in);
+	fclose(out);
+	delete[] points;
+	delete[] buf;
+	/*std::ifstream instream;
+	instream.open(inputFilePath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
+	std::ofstream outstream;
+	outstream.open(outputFilePath.c_str(), std::ios::out | std::ios::binary);
+	if (!instream.is_open() || !outstream.is_open())
+		return false;
+
+	LL fileSize = instream.tellg();
+	instream.seekg(0, std::ios::beg);
+	if (fileSize % sizeof(Point) != 0) {
+		printf("这里有问题\n");
+		return false;
+	}
+	LL size = fileSize / sizeof(Point);
+	Point * buf = new Point[size];
+	char * ans = new char[size];
+	instream.read((char *)buf, size);
+	for (LL i = 0; i < size; i++) {
+		ans[i] = this->decodeMessage(buf[i]);
+	}
+	outstream.write(ans, size);
+
+	instream.close();
+	outstream.close();
+	delete[] buf;
+	delete[] ans;*/
+}
