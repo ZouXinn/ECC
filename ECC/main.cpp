@@ -4,12 +4,22 @@
 
 #include <iostream>
 #include "ECC.h"
+#include "MD5.h"
 
 int main()
 {
-    ECC ecc(2, 1, 6, 11, Point(7, 9));
+    /*ECC ecc(2, 1, 6, 11, Point(7, 9));
     Point p = ecc.mul(6, Point(7, 9));
+    std::cout << p.x << "   " << p.y << std::endl;*/
 
-    std::cout << p.x << "   " << p.y << std::endl;
-    //std::cout << "Hello World!\n";
+
+    /*std::string str = MD5("abcde").toString();
+    str += "12345";
+    std::cout << str << std::endl;*/
+    LL ll = 15;
+    std::string str = "number is ";
+    char  s[100];
+    sprintf(s, "%x", ll);
+    str += s;
+    std::cout << str;
 }

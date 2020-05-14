@@ -1,6 +1,8 @@
 #pragma once
+#include <string>
 #define LL long long
 #define INF 0x7FFFFFFFFFFFFFFF
+#define BYTE_PER_POINT 1 //将多少个字节压缩成一个点
 
 struct Point
 {
@@ -25,6 +27,20 @@ struct Point
 	}
 };
 
+struct SignedMessage
+{
+	std::string message;
+	std::string hash;
+	LL numbers[16 / BYTE_PER_POINT];
+	LL Sn[16 / BYTE_PER_POINT];//MD5的HASH结果为16字节
+};
+
+struct VerifyResult
+{
+	bool success;//是否签名成功
+	std::string message;
+};
+
 struct PointPair
 {
 	Point first, second;
@@ -45,7 +61,7 @@ private:// 成员变量
 	LL randomK;//随机数 -- 可能不会用到
 
 	Point G;//基底
-	Point P;//公钥 P = kG
+	Point P;//公钥 P = rG
 public:// 成员函数
 	Point add(Point p1, Point p2);// 返回p1 + p2 的结果
 	Point minus(Point p1, Point p2);// 返回 p1 - p2 的结果
@@ -76,12 +92,16 @@ public:// 给前端调用的接口
 	ECC(LL r,LL a,LL b,LL p,Point G); // 传入自定义的值进行构造，但是必须计算出G的阶，通过O=nG计算
 	ECC(LL r, LL a, LL b, LL p, Point G, LL n);
 
-	/*
+	
 	//暂时不管返回值和参数类型  ---  每完成一个再解除注释一个
+	/*
 	void encode(); // 将明文加密为密文
 	void decode(); // 将密文加密为明文
-	void sign(); // 对消息进行数字签名
-	void verify(); // 数字签名验证
+	
+	
 	*/
+
+	SignedMessage sign(std::string message); // 对消息进行数字签名
+	VerifyResult verify(SignedMessage signedMessage); // 数字签名验证
 };
 

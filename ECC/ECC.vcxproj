@@ -149,9 +149,11 @@
   <ItemGroup>
     <ClCompile Include="ECC.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MD5.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ECC.h" />
+    <ClInclude Include="MD5.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
