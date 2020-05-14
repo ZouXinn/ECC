@@ -5,7 +5,7 @@
 
 /*
 	返回gcd(a,b)
-	a, b可以为0
+	a,b可以为0
 */
 
 LL ECC::gcd(LL a, LL b)
