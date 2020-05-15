@@ -5,6 +5,9 @@
 #include <iostream>
 #include "ECC.h"
 #include <string>
+void printBigPrime();
+void findECC();
+void findG(LL a, LL b, LL p, LL minN);
 
 int main()
 {
@@ -18,4 +21,7 @@ int main()
  //   str.data();
 	//printf("%d", -5 % 3);
     //std::cout << "Hello World!\n";
+
+    //printBigPrime();
+    findECC();
 }

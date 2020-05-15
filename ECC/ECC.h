@@ -93,7 +93,8 @@ public:// 给前端调用的接口
 	//以下构造函数要通过公式 P=rG 计算出P的值
 	ECC(LL r,LL a,LL b,LL p,Point G); // 传入自定义的值进行构造，但是必须计算出G的阶，通过O=nG计算
 	ECC(LL r, LL a, LL b, LL p, Point G, LL n);
-
+	void setEllipticParameter(LL r, LL a, LL b, LL p, Point G);
+	void setEllipticParameter(LL r, LL a, LL b, LL p, Point G, LL n);
 	/*
 	//暂时不管返回值和参数类型  ---  每完成一个再解除注释一个
 	void encode(); // 将明文加密为密文

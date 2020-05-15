@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ECC.cpp" />
+    <ClCompile Include="findParams.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MD5.cpp" />
   </ItemGroup>

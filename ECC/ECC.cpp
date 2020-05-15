@@ -319,7 +319,36 @@ ECC::ECC(LL r, LL a, LL b, LL p, Point G)
 	}
 }
 
+void ECC::setEllipticParameter(LL r, LL a, LL b, LL p, Point G)
+{
+	this->r = r;
+	this->a = a;
+	this->b = b;
+	this->p = p;
+	this->G = G;
+	//this->P = mul(r, G);
+	//计算n
+	/*Point tG = G;
+	this->n = 1;
+	while (!tG.O())
+	{
+		this->n++;
+		tG = add(tG, G);
+	}*/
+}
+
 ECC::ECC(LL r, LL a, LL b, LL p, Point G, LL n)
+{
+	this->r = r;
+	this->a = a;
+	this->b = b;
+	this->p = p;
+	this->G = G;
+	this->P = mul(r, G);
+	this->n = n;
+}
+
+void ECC::setEllipticParameter(LL r, LL a, LL b, LL p, Point G, LL n)
 {
 	this->r = r;
 	this->a = a;
