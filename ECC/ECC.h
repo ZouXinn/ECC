@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <fstream>
 #define LL long long
 #define INF 0x7FFFFFFFFFFFFFFF
 #define BYTE_PER_POINT 1
@@ -103,6 +104,8 @@ public:// 给前端调用的接口
 	void verify(); // 数字签名验证
 	*/
 
+	bool encodefile(std::string inputFilePath,std::string outputFilePath = ""); //对文件进行加密 
+	bool decodefile(std::string inputFilePath, std::string outputFilePath = ""); //对文件进行解密
 	SignedMessage sign(std::string message); // 对消息进行数字签名
 	VerifyResult verify(SignedMessage signedMessage); // 数字签名验证
 };
