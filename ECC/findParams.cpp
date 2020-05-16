@@ -42,10 +42,11 @@ void findECC()
     //cin >> nMin;
     //cout << "可行的曲线:" << endl;
     //ECC ecc;
+    cout << "P = " << P << endl;
     int MAXN = 0;
     int mA = 0, mB = 0;
-    for (int a = 0; a < aMax; a++)
-        for (int b = 0; b < bMax; b++)
+    for (int a = 1; a < aMax; a++)
+        for (int b = 1; b < bMax; b++)
         {
             int n = 0;
             //ecc.setEllipticParameter(0, a, b, P, Point(0,0));

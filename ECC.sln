@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ECC", "ECC\ECC.vcxproj", "{CEA6FFB4-31C8-4859-AD90-9BF1C73CB0DA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MulThreadCalParams", "MulThreadCalParams\MulThreadCalParams.vcxproj", "{B053D6F2-9194-40B5-BA2B-74024C8B309B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{CEA6FFB4-31C8-4859-AD90-9BF1C73CB0DA}.Release|x64.Build.0 = Release|x64
 		{CEA6FFB4-31C8-4859-AD90-9BF1C73CB0DA}.Release|x86.ActiveCfg = Release|Win32
 		{CEA6FFB4-31C8-4859-AD90-9BF1C73CB0DA}.Release|x86.Build.0 = Release|Win32
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Debug|x64.ActiveCfg = Debug|x64
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Debug|x64.Build.0 = Debug|x64
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Debug|x86.ActiveCfg = Debug|Win32
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Debug|x86.Build.0 = Debug|Win32
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Release|x64.ActiveCfg = Release|x64
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Release|x64.Build.0 = Release|x64
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Release|x86.ActiveCfg = Release|Win32
+		{B053D6F2-9194-40B5-BA2B-74024C8B309B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
