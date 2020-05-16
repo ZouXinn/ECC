@@ -1,10 +1,6 @@
 ﻿#pragma warning(disable:4996)
 #include "ECC.h"
 #include "MD5.h"
-#include <ctime>
-#include <stdlib.h>
-#include <string.h>
-
 /*
 	返回gcd(a,b)
 	a,b可以为0
@@ -240,7 +236,7 @@ Point ECC::decode(PointPair Cm)
 /*
 	暂用一个字节加密成点
 */
-Point ECC::encodeMessage(char message)
+Point ECC::encodeMessage(unsigned char message)
 {
 	LL C = (LL)message; //message 为 x
 	C = (((C * C * C) % this->p) + (C * a) % p + b) % p; //y^2 = C mod p
@@ -288,9 +284,9 @@ Point ECC::encodeMessage(char message)
 /*
 	将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
 */
-char ECC::decodeMessage(Point Pm)
+unsigned char ECC::decodeMessage(Point Pm)
 {
-	char ans = (Pm.x + this->p - Pm.offset) % this->p;
+	unsigned char ans = (Pm.x + this->p - Pm.offset) % this->p;
 	return ans;
 }
 
@@ -463,11 +459,14 @@ bool ECC::encodefile(std::string inputFilePath, std::string outputFilePath) {
 	fread(buf, sizeof(byte), size, in);
 	for (LL i = 0; i < size; i++) {
 		printf("%d\n", buf[i]);
-		m = this->encodeMessage(buf[i]); //明文嵌入 97 7896
+		m = this->encodeMessage(buf[i]); //明文嵌入 99 8299 1
 		if (!judgePoint(m)) {
 			printf("点不在椭圆上");
 		}
 		pp.first = mul(randomK,G);
+
+		pp.first.offset = m.offset;
+
 		Point tmp = mul(randomK,P);
 		pp.second = add(m, tmp);
 		pointPairs[i] = pp;
@@ -534,7 +533,10 @@ bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
 	for (LL i = 0; i < size; i++) {
 		//printf("%c", buf[i]);
 		// points[i] = this->encodeMessage(buf[i]);
-		m = minus(pointPairs[i].second, mul(r, pointPairs[i].first)); // 97 7896
+		m = minus(pointPairs[i].second, mul(r, pointPairs[i].first)); // 99 8299 1
+		
+		m.offset = pointPairs[i].first.offset;
+
 		buf[i] = this->decodeMessage(m);
 		printf("%d\n", buf[i]);
 	}

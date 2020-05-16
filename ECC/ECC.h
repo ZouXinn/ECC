@@ -1,6 +1,10 @@
 #pragma once
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <stdlib.h>
+#include <string.h>
+
 #define LL long long
 #define INF 0x7FFFFFFFFFFFFFFF
 #define BYTE_PER_POINT 1
@@ -76,8 +80,8 @@ public:// 成员函数
 	Point decode(PointPair Cm); // 将密文Cm = {kG,Pm+kP}解密成消息M对应的点Pm
 
 	//消息的类型可以修改，不一定是char*  ,string什么的也行
-	Point encodeMessage(char message);//将消息转化为曲线上的点Pm
-	char decodeMessage(Point Pm);//将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
+	Point encodeMessage(unsigned char message);//将消息转化为曲线上的点Pm
+	unsigned char decodeMessage(Point Pm);//将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
 
 	LL getRandom(); // 获取随机数k , 1 <= k < p
 	bool judgePoint(Point point);//判断点P是否在椭圆曲线上
