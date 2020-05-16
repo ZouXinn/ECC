@@ -297,6 +297,7 @@ unsigned char ECC::decodeMessage(Point Pm)
 
 ECC::ECC()
 {
+	srand(time(0));
 	//设置选好的参数
 
 
@@ -304,6 +305,7 @@ ECC::ECC()
 
 ECC::ECC(LL r, LL a, LL b, LL p, Point G)
 {
+	srand(time(0));
 	this->r = r;
 	this->a = a;
 	this->b = b;
@@ -322,6 +324,7 @@ ECC::ECC(LL r, LL a, LL b, LL p, Point G)
 
 void ECC::setEllipticParameter(LL r, LL a, LL b, LL p, Point G)
 {
+	srand(time(0));
 	this->r = r;
 	this->a = a;
 	this->b = b;
