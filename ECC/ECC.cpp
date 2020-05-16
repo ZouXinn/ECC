@@ -186,6 +186,7 @@ Point ECC::subMul(LL k, Point p, Point ps[], bool flags[])
 */
 Point ECC::mul(LL k, Point p)
 {
+	if (k == 0 || p.O()) return Point(INF, INF);
 	bool* flags = new bool[k + 1];
 	for (int i = 0; i < k + 1; ++i)
 	{
@@ -384,15 +385,16 @@ SignedMessage ECC::sign(std::string message)
 	message += s1;
 	message += s2;
 	ret.hash = MD5(message).toString();
+	const int strSize = BYTE_PER_POINT * 2;
 	for (int i = 0; i < pointNum; ++i) // 获得各个数字
 	{
-		std::string tStr = ret.hash.substr(BYTE_PER_POINT * i, BYTE_PER_POINT);
+		std::string tStr = ret.hash.substr(strSize * i, strSize);
 		ret.numbers[i] = strtoll(tStr.c_str(), NULL, 16); // 16进制的数字字符串转为long long
 	}
 
 	for (int i = 0; i < pointNum; ++i) // 加密
 	{
-		ret.Sn[i] = mod(k - mod(ret.numbers[i] * r, p), p);
+		ret.Sn[i] = mod(k - mod(ret.numbers[i] * r, n), n);
 	}
 	return ret;
 }
