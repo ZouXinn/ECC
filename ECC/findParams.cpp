@@ -45,27 +45,29 @@ void findECC()
     cout << "P = " << P << endl;
     int MAXN = 0;
     int mA = 0, mB = 0;
-    for (int a = 1; a < aMax; a++)
+    /*for (int a = 1; a < aMax; a++)
         for (int b = 1; b < bMax; b++)
-        {
-            int n = 0;
+        {*/
+            int n = 0,a= 188,b= 9220;
             //ecc.setEllipticParameter(0, a, b, P, Point(0,0));
             for (int x = 1; x < P; x++)
             {
                 int m = x * x * x + a * x + b;
-                if (sqrt(m) - int(sqrt(m)) <= 0)
+				int tmp = round(sqrt(m));
+                if (tmp*tmp == m)
                 {
                     n++;
                 }
             }
-            if (n > MAXN)
+			cout << n << endl;
+            /*if (n > MAXN)
             {
                 MAXN = n;
                 mA = a;
                 mB = b;
                 cout << "找到a = " << a << " , b = " << b << " , n = " << n << endl;
-            }
-        }
+            }*/
+        //}
     cout << "解的数量最多时：" << endl;
     cout << "a:" << mA << ",b:" << mB << ",解的最大数量:" << MAXN << endl;
 }

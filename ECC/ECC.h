@@ -13,11 +13,13 @@ struct Point
 	{
 		this->x = 0;
 		this->y = 0;
+		this->offset = 0;
 	}
 	Point(LL x, LL y)
 	{
 		this->x = x;
 		this->y = y;
+		this->offset = 0;
 	}
 	bool operator == (const Point& p) const
 	{
@@ -60,7 +62,7 @@ private:// 成员变量
 	LL p;
 	LL n;// G 的阶
 
-	LL randomK;//随机数 -- 可能不会用到
+	LL randomK = 2;//随机数 -- 可能不会用到
 
 	Point G;//基底
 	Point P;//公钥 P = kG
@@ -78,6 +80,7 @@ public:// 成员函数
 	char decodeMessage(Point Pm);//将曲线上的点Pm转化为消息message，和encodeMessage互为逆过程
 
 	LL getRandom(); // 获取随机数k , 1 <= k < p
+	bool judgePoint(Point point);//判断点P是否在椭圆曲线上
 
 
 private:// 静态工具函数区

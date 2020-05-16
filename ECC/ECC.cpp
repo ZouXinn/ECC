@@ -93,6 +93,10 @@ LL ECC::powerMod(LL b, LL n, LL m)
 	return a;
 }
 
+bool ECC::judgePoint(Point point) {
+	return (point.x * point.x * point.x + a * point.x + b)%p == (point.y * point.y)%p;
+}
+
 /*
 	返回 a mod n，主要是处理a为负数的情况
 */
@@ -448,24 +452,33 @@ bool ECC::encodefile(std::string inputFilePath, std::string outputFilePath) {
 	FILE * in = fopen(inputFilePath.c_str(), "rb");
 	FILE * out = fopen(outputFilePath.c_str(), "wb");
 	fseek(in, 0, SEEK_END);
-	LL size = ftell(in);
+	LL size = ftell(in);//文件的字节数
 	fseek(in, 0, SEEK_SET);
 
 	byte * buf = new byte[size];
-	Point* points = new Point[size];
+	PointPair * pointPairs = new PointPair[size];
+
+	Point m; PointPair pp;
 
 	fread(buf, sizeof(byte), size, in);
 	for (LL i = 0; i < size; i++) {
-		//printf("%d", buf[i]);
-		points[i] = this->encodeMessage(buf[i]);
+		printf("%d\n", buf[i]);
+		m = this->encodeMessage(buf[i]); //明文嵌入 97 7896
+		if (!judgePoint(m)) {
+			printf("点不在椭圆上");
+		}
+		pp.first = mul(randomK,G);
+		Point tmp = mul(randomK,P);
+		pp.second = add(m, tmp);
+		pointPairs[i] = pp;
 		// buf[i] = this->decodeMessage(points[i]);
 	}
 
-	fwrite(points, sizeof(Point), size, out);
+	fwrite(pointPairs, sizeof(PointPair), size, out);
 
 	fclose(in);
 	fclose(out);
-	delete[] points;
+	delete[] pointPairs;
 	delete[] buf;
 
 	//std::ifstream instream;
@@ -507,27 +520,30 @@ bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
 	LL len = ftell(in); // 该文件有多少字节
 	fseek(in, 0, SEEK_SET);
 
-	if (len % sizeof(Point) != 0) {
+	if (len % sizeof(PointPair) != 0) {
 		printf("这里有问题");
 		return false;
 	}
 
-	LL size = len / sizeof(Point);
-	Point* points = new Point[size];
+	LL size = len / sizeof(PointPair);
+	PointPair* pointPairs = new PointPair[size];
 	byte * buf = new byte[size];
 
-	fread(points, sizeof(Point), size, in);
+	Point m;
+	fread(pointPairs, sizeof(PointPair), size, in);
 	for (LL i = 0; i < size; i++) {
 		//printf("%c", buf[i]);
 		// points[i] = this->encodeMessage(buf[i]);
-		buf[i] = this->decodeMessage(points[i]);
+		m = minus(pointPairs[i].second, mul(r, pointPairs[i].first)); // 97 7896
+		buf[i] = this->decodeMessage(m);
+		printf("%d\n", buf[i]);
 	}
 
-	fwrite(buf, sizeof(char), size, out);
+	fwrite(buf, sizeof(byte), size, out);
 
 	fclose(in);
 	fclose(out);
-	delete[] points;
+	delete[] pointPairs;
 	delete[] buf;
 	/*std::ifstream instream;
 	instream.open(inputFilePath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
@@ -556,3 +572,4 @@ bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
 	delete[] buf;
 	delete[] ans;*/
 }
+
