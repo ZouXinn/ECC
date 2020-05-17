@@ -97,6 +97,9 @@ private:// 静态工具函数区
 public:// 给前端调用的接口
 	ECC(); // 默认使用默认的值进行构造
 
+	void setRK(LL key); // 设置密钥
+	Point getPK(); // 获得公钥P
+
 	//以下构造函数要通过公式 P=rG 计算出P的值
 	ECC(LL r,LL a,LL b,LL p,Point G); // 传入自定义的值进行构造，但是必须计算出G的阶，通过O=nG计算
 	ECC(LL r, LL a, LL b, LL p, Point G, LL n);

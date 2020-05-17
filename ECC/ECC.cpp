@@ -295,12 +295,28 @@ unsigned char ECC::decodeMessage(Point Pm)
 	构造函数
 */
 
-ECC::ECC()
+ECC::ECC()//ECC ecc(6,188, 9220,9967, Point(8, 106));
 {
 	srand(time(0));
 	//设置选好的参数
+	this->r = 6;
+	this->a = 188;
+	this->b = 9220;
+	this->p = 9967;
+	this->G = Point(8, 106);
+	this->P = mul(r, G);
+	this->n = 10110;
+}
 
+void ECC::setRK(LL key) // 设置密钥
+{
+	this->r = key;
+	this->P = mul(r, G);
+}
 
+Point ECC::getPK() // 获得公钥P
+{
+	return this->P;
 }
 
 ECC::ECC(LL r, LL a, LL b, LL p, Point G)
@@ -330,15 +346,15 @@ void ECC::setEllipticParameter(LL r, LL a, LL b, LL p, Point G)
 	this->b = b;
 	this->p = p;
 	this->G = G;
-	//this->P = mul(r, G);
+	this->P = mul(r, G);
 	//计算n
-	/*Point tG = G;
+	Point tG = G;
 	this->n = 1;
 	while (!tG.O())
 	{
 		this->n++;
 		tG = add(tG, G);
-	}*/
+	}
 }
 
 ECC::ECC(LL r, LL a, LL b, LL p, Point G, LL n)
