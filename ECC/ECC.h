@@ -115,7 +115,7 @@ public:// 给前端调用的接口
 
 	bool encodefile(std::string inputFilePath,std::string outputFilePath = ""); //对文件进行加密 
 	bool decodefile(std::string inputFilePath, std::string outputFilePath = ""); //对文件进行解密
-	SignedMessage sign(std::string message); // 对消息进行数字签名
-	VerifyResult verify(SignedMessage signedMessage); // 数字签名验证
+	std::string sign(std::string message); // 对消息进行数字签名
+	std::string verify(std::string signedMessage); // 数字签名验证
 };
 
