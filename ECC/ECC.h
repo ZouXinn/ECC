@@ -86,7 +86,6 @@ public:// 成员函数
 	LL getRandom(); // 获取随机数k , 1 <= k < p
 	bool judgePoint(Point point);//判断点P是否在椭圆曲线上
 
-
 private:// 静态工具函数区
 	static LL mod(LL a, LL n);// 返回 a mod n，主要是处理a为负数的情况
 	static LL inv(LL a, LL n);// 返回 a关于模n的逆元，如果不可逆则返回0

@@ -459,22 +459,17 @@ bool ECC::encodefile(std::string inputFilePath, std::string outputFilePath) {
 	byte * buf = new byte[size];
 	PointPair * pointPairs = new PointPair[size];
 
-	Point m; PointPair pp;
+	Point m;
 
 	fread(buf, sizeof(byte), size, in);
 	for (LL i = 0; i < size; i++) {
-		printf("%d\n", buf[i]);
+		//printf("%d\n", buf[i]);
 		m = this->encodeMessage(buf[i]); //明文嵌入 99 8299 1
 		if (!judgePoint(m)) {
 			printf("点不在椭圆上");
 		}
-		pp.first = mul(randomK,G);
-
-		pp.first.offset = m.offset;
-
-		Point tmp = mul(randomK,P);
-		pp.second = add(m, tmp);
-		pointPairs[i] = pp;
+		pointPairs[i] = encode(m);
+		pointPairs[i].first.offset = m.offset;
 		// buf[i] = this->decodeMessage(points[i]);
 	}
 
@@ -484,30 +479,6 @@ bool ECC::encodefile(std::string inputFilePath, std::string outputFilePath) {
 	fclose(out);
 	delete[] pointPairs;
 	delete[] buf;
-
-	//std::ifstream instream;
-	//instream.open(inputFilePath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
-	//std::ofstream outstream;
-	//outstream.open(outputFilePath.c_str(), std::ios::out | std::ios::binary);
-	//if(!instream.is_open() || !outstream.is_open())
-	//	return false;
-
-	//LL size = instream.tellg();
-	//instream.seekg(0, std::ios::beg);
-	//char* buf = new char[size];
-	//Point* points = new Point[size];
-	//instream.read(buf, size);
-	//for (LL i = 0; i < size; i++) {
-	//	printf("%c", buf[i]);
-	//	points[i] = this->encodeMessage(buf[i]);
-	//	buf[i] = this->decodeMessage(points[i]);
-	//}
-	//// outstream.write((char *)p, size*sizeof(Point));
-	//outstream.write(buf, size);
-	//instream.close();
-	//outstream.close();
-	//delete[] buf;
-	//delete[] points;
 }
 
 /*
@@ -525,7 +496,7 @@ bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
 	fseek(in, 0, SEEK_SET);
 
 	if (len % sizeof(PointPair) != 0) {
-		printf("这里有问题");
+		printf("加密文件损坏");
 		return false;
 	}
 
@@ -538,12 +509,10 @@ bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
 	for (LL i = 0; i < size; i++) {
 		//printf("%c", buf[i]);
 		// points[i] = this->encodeMessage(buf[i]);
-		m = minus(pointPairs[i].second, mul(r, pointPairs[i].first)); // 99 8299 1
-		
+		m = decode(pointPairs[i]);
 		m.offset = pointPairs[i].first.offset;
-
 		buf[i] = this->decodeMessage(m);
-		printf("%d\n", buf[i]);
+		//printf("%d\n", buf[i]);
 	}
 
 	fwrite(buf, sizeof(byte), size, out);
@@ -552,31 +521,5 @@ bool ECC::decodefile(std::string inputFilePath, std::string outputFilePath) {
 	fclose(out);
 	delete[] pointPairs;
 	delete[] buf;
-	/*std::ifstream instream;
-	instream.open(inputFilePath.c_str(), std::ios::in | std::ios::binary | std::ios::ate);
-	std::ofstream outstream;
-	outstream.open(outputFilePath.c_str(), std::ios::out | std::ios::binary);
-	if (!instream.is_open() || !outstream.is_open())
-		return false;
-
-	LL fileSize = instream.tellg();
-	instream.seekg(0, std::ios::beg);
-	if (fileSize % sizeof(Point) != 0) {
-		printf("这里有问题\n");
-		return false;
-	}
-	LL size = fileSize / sizeof(Point);
-	Point * buf = new Point[size];
-	char * ans = new char[size];
-	instream.read((char *)buf, size);
-	for (LL i = 0; i < size; i++) {
-		ans[i] = this->decodeMessage(buf[i]);
-	}
-	outstream.write(ans, size);
-
-	instream.close();
-	outstream.close();
-	delete[] buf;
-	delete[] ans;*/
 }
 
