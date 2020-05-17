@@ -69,7 +69,7 @@ private:// 成员变量
 	LL randomK = 2;//随机数 -- 可能不会用到
 
 	Point G;//基底
-	Point P;//公钥 P = kG
+	Point P;//公钥 P = rG
 public:// 成员函数
 	Point add(Point p1, Point p2);// 返回p1 + p2 的结果
 	Point minus(Point p1, Point p2);// 返回 p1 - p2 的结果
