@@ -29,8 +29,11 @@ int main()
 
     //printBigPrime();
     // findECC();
-    SignedMessage signedMsg = ecc.sign("abcdedeeaxafas");
+    std::string signedMsg = ecc.sign("---abcdedeeaxafasgffsdsadanoggvzwaskdnbkdsbkj121241231---");
+    std::cout << signedMsg << std::endl;
+    std::string result = ecc.verify(signedMsg);
+    std::cout << result << std::endl;
     //signedMsg.message += '1';
-    VerifyResult result = ecc.verify(signedMsg);
-    std::cout << result.success << std::endl << result.message << std::endl;
+    //VerifyResult result = ecc.verify(signedMsg);
+    //std::cout << result.success << std::endl << result.message << std::endl;
 }

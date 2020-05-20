@@ -69,7 +69,7 @@ private:// 成员变量
 	LL randomK = 2;//随机数 -- 可能不会用到
 
 	Point G;//基底
-	Point P;//公钥 P = kG
+	Point P;//公钥 P = rG
 public:// 成员函数
 	Point add(Point p1, Point p2);// 返回p1 + p2 的结果
 	Point minus(Point p1, Point p2);// 返回 p1 - p2 的结果
@@ -97,6 +97,10 @@ private:// 静态工具函数区
 public:// 给前端调用的接口
 	ECC(); // 默认使用默认的值进行构造
 
+	void setRK(LL key); // 设置密钥
+	Point getPK(); // 获得公钥P
+	void setPK(Point pk); // 设置公钥P,但设置之后只能用曲线进行加密和签名验证，不能使用需要密钥r的功能
+
 	//以下构造函数要通过公式 P=rG 计算出P的值
 	ECC(LL r,LL a,LL b,LL p,Point G); // 传入自定义的值进行构造，但是必须计算出G的阶，通过O=nG计算
 	ECC(LL r, LL a, LL b, LL p, Point G, LL n);
@@ -112,7 +116,7 @@ public:// 给前端调用的接口
 
 	bool encodefile(std::string inputFilePath,std::string outputFilePath = ""); //对文件进行加密 
 	bool decodefile(std::string inputFilePath, std::string outputFilePath = ""); //对文件进行解密
-	SignedMessage sign(std::string message); // 对消息进行数字签名
-	VerifyResult verify(SignedMessage signedMessage); // 数字签名验证
+	std::string sign(std::string message); // 对消息进行数字签名
+	std::string verify(std::string signedMessage); // 数字签名验证
 };
 

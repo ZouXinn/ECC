@@ -1,6 +1,7 @@
 ﻿#pragma warning(disable:4996)
 #include "ECC.h"
 #include "MD5.h"
+#define SPLIT_CHAR '-'
 /*
 	返回gcd(a,b)
 	a,b可以为0
@@ -295,12 +296,33 @@ unsigned char ECC::decodeMessage(Point Pm)
 	构造函数
 */
 
-ECC::ECC()
+ECC::ECC()//ECC ecc(6,188, 9220,9967, Point(8, 106));
 {
 	srand(time(0));
 	//设置选好的参数
+	this->r = 6;
+	this->a = 188;
+	this->b = 9220;
+	this->p = 9967;
+	this->G = Point(8, 106);
+	this->P = mul(r, G);
+	this->n = 10110;
+}
 
+void ECC::setRK(LL key) // 设置密钥
+{
+	this->r = key;
+	this->P = mul(r, G);
+}
 
+void ECC::setPK(Point pk) 
+{
+	this->P = pk;
+}
+
+Point ECC::getPK() // 获得公钥P
+{
+	return this->P;
 }
 
 ECC::ECC(LL r, LL a, LL b, LL p, Point G)
@@ -330,15 +352,15 @@ void ECC::setEllipticParameter(LL r, LL a, LL b, LL p, Point G)
 	this->b = b;
 	this->p = p;
 	this->G = G;
-	//this->P = mul(r, G);
+	this->P = mul(r, G);
 	//计算n
-	/*Point tG = G;
+	Point tG = G;
 	this->n = 1;
 	while (!tG.O())
 	{
 		this->n++;
 		tG = add(tG, G);
-	}*/
+	}
 }
 
 ECC::ECC(LL r, LL a, LL b, LL p, Point G, LL n)
@@ -374,16 +396,18 @@ LL ECC::getRandom()
 
 /*
 	对消息进行数字签名
-*/
-SignedMessage ECC::sign(std::string message)
+
+std::string ECC::sign(std::string message)
 {
 	SignedMessage ret;
+	std::string str = "";
 	const int pointNum = 16 / BYTE_PER_POINT;
 	char s1[100], s2[100];
 	LL k = getRandom();
 	Point R = mul(k, G);
 	sprintf(s1, "%x", R.x);
 	sprintf(s2, "%x", R.y);
+	str += message;
 	ret.message = message;
 	message += s1;
 	message += s2;
@@ -393,19 +417,51 @@ SignedMessage ECC::sign(std::string message)
 	{
 		std::string tStr = ret.hash.substr(strSize * i, strSize);
 		ret.numbers[i] = strtoll(tStr.c_str(), NULL, 16); // 16进制的数字字符串转为long long
+		str += '-' + std::to_string(ret.numbers[i]);
 	}
 
 	for (int i = 0; i < pointNum; ++i) // 加密
 	{
 		ret.Sn[i] = mod(k - mod(ret.numbers[i] * r, n), n);
+		str += '-' + std::to_string(ret.Sn[i]);
 	}
+	str += ret.hash;
 	return ret;
+}
+*/
+std::string ECC::sign(std::string message)
+{
+	std::string str = "",msg = message;
+	const int pointNum = 16 / BYTE_PER_POINT;
+	LL numbers[pointNum], Sn[pointNum];
+	char s1[100], s2[100];
+	LL k = getRandom();
+	Point R = mul(k, G);
+	sprintf(s1, "%x", R.x);
+	sprintf(s2, "%x", R.y);
+	message += s1;
+	message += s2;
+	std::string hash = MD5(message).toString();
+	const int strSize = BYTE_PER_POINT * 2;
+	str = hash;
+	for (int i = 0; i < pointNum; ++i) // 获得各个数字
+	{
+		std::string tStr = hash.substr(strSize * i, strSize);
+		numbers[i] = strtoll(tStr.c_str(), NULL, 16); // 16进制的数字字符串转为long long
+		str += SPLIT_CHAR + std::to_string(numbers[i]);
+	}
+	for (int i = 0; i < pointNum; ++i) // 加密
+	{
+		Sn[i] = mod(k - mod(numbers[i] * r, n), n);
+		str += SPLIT_CHAR + std::to_string(Sn[i]);
+	}
+	str += SPLIT_CHAR + msg;
+	return str;
 }
 
 /*
 	对数字签名进行验证
-*/
-VerifyResult ECC::verify(SignedMessage signedMessage)
+	VerifyResult ECC::verify(SignedMessage signedMessage)
 {
 	VerifyResult ret;
 	ret.message = signedMessage.message;
@@ -439,6 +495,70 @@ VerifyResult ECC::verify(SignedMessage signedMessage)
 	std::string H = MD5(verifyMessage).toString();
 	ret.success = H == signedMessage.hash;
 	return ret;
+}
+*/
+std::string ECC::verify(std::string signedMessage)
+{
+	//VerifyResult ret;
+	std::string str = "", msg, hash;
+	const int pointNum = 16 / BYTE_PER_POINT;
+	LL numbers[pointNum], Sn[pointNum];
+	//获取numbers  Sn  msg hash
+	int start = 0, end = 0;
+	//获取hash
+	while (signedMessage[end] != '-') ++end;
+	hash = signedMessage.substr(start, end - start);
+	//获取numbers
+	for (int i = 0; i < pointNum; ++i)
+	{
+		start = end + 1;
+		end = start;
+		while (signedMessage[end] != '-') ++end;
+		std::string tStr = signedMessage.substr(start, end - start);
+		numbers[i] = strtoll(tStr.c_str(), NULL, 10);
+	}
+	//获取Sn
+	for (int i = 0; i < pointNum; ++i)
+	{
+		start = end + 1;
+		end = start;
+		while (signedMessage[end] != '-') ++end;
+		std::string tStr = signedMessage.substr(start, end - start);
+		Sn[i] = strtoll(tStr.c_str(), NULL, 10);
+	}
+	//获取msg
+	start = end + 1;
+	msg = signedMessage.substr(start, signedMessage.length() - start);
+	Point Rs[pointNum];
+
+	for (int i = 0; i < pointNum; ++i)
+	{
+		Point p1 = mul(Sn[i], G);
+		Point p2 = mul(numbers[i], P);
+		Rs[i] = add(p1, p2);
+	}
+	bool flag = true;
+	for (int i = 1; i < pointNum; ++i)
+		if (!(Rs[0] == Rs[i])) {
+			flag = false;
+			break;
+		}
+	if (!flag)
+		str += "0-";
+	else
+	{
+		std::string message = msg;
+		char s1[100], s2[100];
+		sprintf(s1, "%x", Rs[0].x);
+		sprintf(s2, "%x", Rs[0].y);
+		message += s1;
+		message += s2;
+		std::string H = MD5(message).toString();
+		if (H == hash) str += "1-";
+		else str += "0-";
+	}
+	str += msg;
+	return str;
 }
 
 
