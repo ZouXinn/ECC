@@ -99,6 +99,7 @@ public:// 给前端调用的接口
 
 	void setRK(LL key); // 设置密钥
 	Point getPK(); // 获得公钥P
+	void setPK(Point pk); // 设置公钥P,但设置之后只能用曲线进行加密和签名验证，不能使用需要密钥r的功能
 
 	//以下构造函数要通过公式 P=rG 计算出P的值
 	ECC(LL r,LL a,LL b,LL p,Point G); // 传入自定义的值进行构造，但是必须计算出G的阶，通过O=nG计算

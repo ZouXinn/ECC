@@ -315,6 +315,11 @@ void ECC::setRK(LL key) // 设置密钥
 	this->P = mul(r, G);
 }
 
+void ECC::setPK(Point pk) 
+{
+	this->P = pk;
+}
+
 Point ECC::getPK() // 获得公钥P
 {
 	return this->P;
